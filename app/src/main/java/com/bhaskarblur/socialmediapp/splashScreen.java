@@ -1,0 +1,41 @@
+package com.bhaskarblur.socialmediapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.window.SplashScreen;
+
+import java.util.Objects;
+
+public class splashScreen extends AppCompatActivity {
+
+    SharedPreferences prefs;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash_screen);
+//      getActionBar().hide();
+
+       prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d("logged", String.valueOf(prefs.getBoolean("loggedStatus", false)));
+       if(prefs.getBoolean("loggedStatus", false)) {
+           startActivity(new Intent(this, MainActivity.class));
+           finish();
+       }
+       else {
+           startActivity(new Intent(this, loginscreen.class));
+           finish();
+       }
+
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+    }
+}
