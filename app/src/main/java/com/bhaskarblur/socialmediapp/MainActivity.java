@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -23,11 +25,13 @@ import com.bhaskarblur.socialmediapp.databinding.ActivityMainBinding;
 import com.bhaskarblur.socialmediapp.env.keys;
 import com.bhaskarblur.socialmediapp.models.PostListModel;
 import com.bhaskarblur.socialmediapp.models.Posts;
+import com.bhaskarblur.socialmediapp.models.actionRequest;
 import com.bhaskarblur.socialmediapp.models.generalRequest;
 import com.bhaskarblur.socialmediapp.models.userModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
@@ -62,13 +66,132 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void manageLogic() {
+        String pfp = preferences.getString("userPic", "");
         adapter = new postsAdapter(this, postList);
+        adapter.setOnClickInterface(new postsAdapter.onClickListener() {
+            @Override
+            public void onLikeClick(int position_, int action) {
+//                Toast.makeText(MainActivity.this, "Action "+
+//                        String.valueOf(action), Toast.LENGTH_SHORT).show();
+
+                likePost(postList.get(position_).getPostid(), String.valueOf(action));
+            }
+
+            @Override
+            public void onSaveClick(int position_, int action) {
+                savePost(postList.get(position_).getPostid(), String.valueOf(action));
+            }
+
+            @Override
+            public void onCommentClick(int position_) {
+                Intent intent = new Intent(MainActivity.this, commentsActivity.class);
+                Bundle bundle= new Bundle();
+                bundle.putString("postId", postList.get(position_).getPostid());
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+
+            }
+
+            @Override
+            public void onLikesCountClick(int position_) {
+                Intent intent = new Intent(MainActivity.this, likesActivity.class);
+                Bundle bundle= new Bundle();
+                bundle.putString("postId", postList.get(position_).getPostid());
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+
+            }
+        });
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         binding.postList.setLayoutManager(llm);
         binding.postList.setAdapter(adapter);
+
+        if(!pfp.equals("")) {
+            Picasso.get().load(pfp)
+                    .resize(120, 120)
+                    .transform(new CropCircleTransformation()).into(binding.userIcon);
+        }
+
     }
 
+    private void likePost(String postId, String action) {
+        String email = preferences.getString("userEmail","");
+        String token = preferences.getString("accessToken", "");
+        keys _keys = new keys();
+        Retrofit client = new Retrofit.Builder().baseUrl(_keys.getApi_baseurl())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        apiClient api = client.create(apiClient.class);
+
+        actionRequest request = new actionRequest(email,token, action, postId);
+
+        Call<PostListModel> likepostCall = api.likepost(request);
+
+        likepostCall.enqueue(new Callback<PostListModel>() {
+            @Override
+            public void onResponse(Call<PostListModel> call, Response<PostListModel> response) {
+
+                if(response.code() == 200) {
+                    if (response.body() != null) {
+                      Log.d("msg", Objects.requireNonNull(response.body().getMessage()));
+                    }
+                }
+                else {
+                    if (response.body() != null) {
+                        Toast.makeText(MainActivity.this, response
+                                .body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostListModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void savePost(String postId, String action) {
+        String email = preferences.getString("userEmail","");
+        String token = preferences.getString("accessToken", "");
+        keys _keys = new keys();
+        Retrofit client = new Retrofit.Builder().baseUrl(_keys.getApi_baseurl())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        apiClient api = client.create(apiClient.class);
+
+        actionRequest request = new actionRequest(email,token, action, postId);
+
+        Call<PostListModel> likepostCall = api.savepost(request);
+
+        likepostCall.enqueue(new Callback<PostListModel>() {
+            @Override
+            public void onResponse(Call<PostListModel> call, Response<PostListModel> response) {
+
+                if(response.code() == 200) {
+                    if (response.body() != null) {
+                        Log.d("msg", Objects.requireNonNull(response.body().getMessage()));
+                    }
+                }
+                else {
+                    if (response.body() != null) {
+                        Toast.makeText(MainActivity.this, response
+                                .body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostListModel> call, Throwable t) {
+
+            }
+        });
+    }
     private void loadData() {
 
         String email = preferences.getString("userEmail","");
@@ -130,5 +253,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 1000);
+    }
+
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 }

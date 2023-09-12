@@ -116,4 +116,23 @@ class userModel {
         }
 
     }
+
+    public class signuprequestBody {
+
+        constructor(username: String, email: String, password: String) {
+            this.username = username;
+            this.email = email
+            this.password = password
+        }
+
+        public lateinit var email:String;
+        public lateinit var password:String;
+        public lateinit var username: String;
+
+        public fun setCreds(email: String, password: String) {
+            this.email =email;
+            this.password=password;
+        }
+
+    }
 }

@@ -16,3 +16,49 @@ class generalRequest {
         public lateinit var token:String;
 
 }
+
+class actionRequest {
+
+
+    constructor(email: String, token: String
+    , action:String,  postId:String) {
+        this.email = email
+        this.token = token
+        this.action = action;
+        this. postId = postId
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("action")
+    public lateinit var action:String;
+    @SerializedName("postid")
+    public lateinit var postId:String;
+
+}
+
+class commentRequest {
+
+
+    constructor(email: String, token: String
+                , comment:String,  postId:String) {
+        this.email = email
+        this.token = token
+        this.comment = comment;
+        this. postId = postId
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("comment")
+    public lateinit var comment:String;
+    @SerializedName("postid")
+    public lateinit var postId:String;
+
+}

@@ -1,24 +1,26 @@
 package com.bhaskarblur.socialmediapp.adapter
 
 import android.content.Context
-import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bhaskarblur.socialmediapp.R
 import com.bhaskarblur.socialmediapp.models.Posts
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import java.lang.String
+import kotlin.Int
+import kotlin.toString
 
 class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
 
     private lateinit var context_ : Context;
     private lateinit var list : ArrayList<Posts>;
-
+    public lateinit var listener_ : onClickListener;
     constructor(context_: Context, list: ArrayList<Posts>) : super() {
         this.context_ = context_
         this.list = list
@@ -29,13 +31,15 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): postsAdapter.viewHolder {
         var view = LayoutInflater.from(context_).inflate(R.layout.posts_layout, parent, false);
-        return viewHolder(view);
+        return viewHolder(view, listener_);
     }
 
     override fun onBindViewHolder(holder: postsAdapter.viewHolder, position: Int) {
-        Picasso.get().load(list.get(position).userDetails?.profilepic)
-            .resize(120, 120)
-            .transform(CropCircleTransformation()).into(holder.user_pfp);
+        if(list.get(position).userDetails?.profilepic !=null) {
+            Picasso.get().load(list.get(position).userDetails?.profilepic)
+                .resize(120, 120)
+                .transform(CropCircleTransformation()).into(holder.user_pfp);
+        }
 
         holder.user_name.setText(list.get(position).userDetails?.postedByUsername.toString());
 
@@ -47,15 +51,19 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
 
         if(list.get(position).isLiked == 1) {
             holder.like_button.setImageResource(R.drawable.love_on);
+            holder.like_button.setTag(R.drawable.love_on);
         }
         else {
             holder.like_button.setImageResource(R.drawable.love_off);
+            holder.like_button.setTag(R.drawable.love_off);
         }
         if(list.get(position).isSaved == 1) {
             holder.save_button.setImageResource(R.drawable.bookmark_on);
+            holder.save_button.setTag(R.drawable.bookmark_on);
         }
         else {
             holder.save_button.setImageResource(R.drawable.bookmark_off);
+            holder.save_button.setTag(R.drawable.bookmark_off);
         }
     }
 
@@ -63,7 +71,7 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
         return list.size;
     }
 
-    class viewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class viewHolder(itemView: View, listener: onClickListener) : RecyclerView.ViewHolder(itemView) {
 
         var user_pfp: ImageView = itemView.findViewById(R.id.user_icon);
         var user_name : TextView = itemView.findViewById(R.id.user_name);
@@ -75,5 +83,78 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
         var like_button : ImageView = itemView.findViewById(R.id.love_icon);
         var comment_button : ImageView = itemView.findViewById(R.id.comment_icon);
         var save_button : ImageView = itemView.findViewById(R.id.save_icon);
+        init {
+
+            like_button.setOnClickListener {
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    var action : Int;
+                    val resource = like_button.getTag();
+                    val d = Log.d("tag", resource.toString());
+                    if(like_button.getTag().equals(R.drawable.love_off)) {
+                        action = 0;
+                        like_button.setImageResource(R.drawable.love_on);
+                        like_button.setTag(R.drawable.love_on);
+                        likes_count.setText(String.valueOf(likes_count.text.toString().toInt() +1 ))
+                    }
+                    else {
+                        action = 1;
+                        like_button.setImageResource(R.drawable.love_off);
+                        like_button.setTag(R.drawable.love_off);
+                        likes_count.setText(String.valueOf(likes_count.text.toString().toInt() - 1 ))
+                    }
+
+                    listener.onLikeClick(adapterPosition, action);
+                }
+            }
+
+            comment_button.setOnClickListener {
+                    if(adapterPosition != RecyclerView.NO_POSITION) {
+                        listener.onCommentClick(adapterPosition);
+
+                    }
+            }
+            save_button.setOnClickListener {
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    var action : Int;
+                    val resource = like_button.getTag();
+                    val d = Log.d("tag", resource.toString());
+                    if(save_button.getTag().equals(R.drawable.bookmark_off)) {
+                        action = 0;
+                        save_button.setImageResource(R.drawable.bookmark_on);
+                        save_button.setTag(R.drawable.bookmark_on);
+
+
+                    }
+                    else {
+                        action = 1;
+                        save_button.setImageResource(R.drawable.bookmark_off);
+                        save_button.setTag(R.drawable.bookmark_off);
+                    }
+
+                    listener.onSaveClick(adapterPosition, action);
+                }
+            }
+            likes_count.setOnClickListener({
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onLikesCountClick(adapterPosition);
+                }
+            });
+        }
+    }
+
+    interface onClickListener {
+
+         fun onLikeClick( position_ : Int,  action : Int);
+
+        fun onSaveClick( position_ : Int,  action : Int);
+
+        fun onCommentClick( position_ : Int);
+
+        fun onLikesCountClick( position_ : Int);
+    }
+
+    public fun setOnClickInterface(listener: onClickListener) {
+        this.listener_ = listener;
+
     }
 }
