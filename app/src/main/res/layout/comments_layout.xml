@@ -20,11 +20,11 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginStart="18dp"
-            android:src="@drawable/user_icon"
+            android:src="@drawable/user_pfpicon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/user_icon" />
+            app:srcCompat="@drawable/user_pfpicon" />
 
         <TextView
             android:id="@+id/user_name"

@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void manageLogic() {
-        String pfp = preferences.getString("userPic", "");
         adapter = new postsAdapter(this, postList);
         adapter.setOnClickInterface(new postsAdapter.onClickListener() {
             @Override
@@ -109,11 +108,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.postList.setLayoutManager(llm);
         binding.postList.setAdapter(adapter);
 
-        if(!pfp.equals("")) {
-            Picasso.get().load(pfp)
-                    .resize(120, 120)
-                    .transform(new CropCircleTransformation()).into(binding.userIcon);
-        }
+
 
     }
 
@@ -197,6 +192,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         String email = preferences.getString("userEmail","");
         String name = preferences.getString("userName","");
         String token = preferences.getString("accessToken", "");
+        String pfp = preferences.getString("userPic", "");
+        if(!pfp.equals("")) {
+            Picasso.get().load(pfp)
+                    .resize(120, 120)
+                    .transform(new CropCircleTransformation()).into(binding.userIcon);
+        }
         binding.userName.setText("Hello "+name +"!");
         keys _keys = new keys();
        Retrofit client = new Retrofit.Builder().baseUrl(_keys.getApi_baseurl())
@@ -259,4 +260,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
+
 }

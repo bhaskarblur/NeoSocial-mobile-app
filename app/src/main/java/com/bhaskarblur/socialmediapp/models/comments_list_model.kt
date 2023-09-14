@@ -19,6 +19,21 @@ class CommentsListModel {
 
 }
 
+class imageListModel {
+
+    @SerializedName("message" ) @Expose var message : String?          = null;
+    @SerializedName("image"   ) @Expose var image   : String? = null
+
+    constructor(
+        message: String,
+        image: ArrayList<comments>
+    ) {
+
+        this.message = message;
+        this.image = image.toString();
+    }
+
+}
 
 class comments  {
 

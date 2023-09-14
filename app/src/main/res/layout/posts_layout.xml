@@ -20,11 +20,11 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginStart="18dp"
-            android:src="@drawable/user_icon"
+            android:src="@drawable/user_pfpicon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/user_icon" />
+            app:srcCompat="@drawable/user_pfpicon" />
 
         <TextView
             android:id="@+id/user_name"
@@ -47,7 +47,7 @@
             android:fontFamily="@font/montserrat"
             android:text="Location post"
             android:textColor="#3E3D3D"
-            android:textSize="10.5sp"
+            android:textSize="11sp"
             app:layout_constraintStart_toEndOf="@+id/user_icon"
             app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
@@ -74,12 +74,12 @@
         <ImageView
             android:id="@+id/post_image"
             android:layout_width="0dp"
-            android:layout_height="320dp"
+            android:layout_height="360dp"
             android:layout_marginTop="4dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/user_icon"
-         android:clickable="true"
+            android:clickable="true"
             android:foreground="?selectableItemBackground"
+            android:scaleType="fitXY"
+            android:src="@drawable/user_pfpicon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

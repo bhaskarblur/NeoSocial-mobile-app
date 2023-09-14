@@ -6,13 +6,18 @@ import com.bhaskarblur.socialmediapp.models.PostListModel;
 import com.bhaskarblur.socialmediapp.models.actionRequest;
 import com.bhaskarblur.socialmediapp.models.commentRequest;
 import com.bhaskarblur.socialmediapp.models.generalRequest;
+import com.bhaskarblur.socialmediapp.models.imageListModel;
 import com.bhaskarblur.socialmediapp.models.userModel;
 
 import java.util.HashMap;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface apiClient {
 
@@ -42,4 +47,8 @@ public interface apiClient {
 
     @POST("posts/delete-comment")
     Call<CommentsListModel> deletecomment(@Body commentRequest request);
+
+    @Multipart
+    @POST("users/upload-profile-pic")
+    Call<imageListModel> uploadpic(@Part MultipartBody.Part email, @Part MultipartBody.Part token, @Part MultipartBody.Part file);
 }

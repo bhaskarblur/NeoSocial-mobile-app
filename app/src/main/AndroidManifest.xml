@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Socialmediapp"
         tools:targetApi="31">
+        <activity
+            android:name=".uploadPost"
+            android:exported="false" />
         <activity
             android:name=".uploadPic"
             android:exported="false" />

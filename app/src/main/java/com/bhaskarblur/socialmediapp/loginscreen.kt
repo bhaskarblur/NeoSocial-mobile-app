@@ -42,6 +42,7 @@ class loginscreen : AppCompatActivity() {
 
         binding.signupTxt.setOnClickListener({
             startActivity(Intent(this@loginscreen, signupActivity::class.java));
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
         })
         binding.loginBtn.setOnClickListener {
 

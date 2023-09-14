@@ -94,7 +94,7 @@ class signupActivity : AppCompatActivity() {
                                 editor.putString("userPic", response.body()?.getUserDetails()?.getProfilepic().toString())
                                 editor.apply()
                                 editor.commit()
-                                startActivity(Intent(this@signupActivity, MainActivity::class.java));
+                                startActivity(Intent(this@signupActivity, uploadPic::class.java));
                                 finish();
 
                             }
