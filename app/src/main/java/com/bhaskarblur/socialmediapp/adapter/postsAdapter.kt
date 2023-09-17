@@ -19,7 +19,7 @@ import kotlin.toString
 class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
 
     private lateinit var context_ : Context;
-    private lateinit var list : ArrayList<Posts>;
+    public lateinit var list : ArrayList<Posts>;
     public lateinit var listener_ : onClickListener;
     constructor(context_: Context, list: ArrayList<Posts>) : super() {
         this.context_ = context_
@@ -134,6 +134,18 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
                     listener.onSaveClick(adapterPosition, action);
                 }
             }
+
+            user_name.setOnClickListener  {
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onProfileClick(    adapterPosition);
+                }
+            }
+            user_pfp.setOnClickListener {
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onProfileClick(    adapterPosition);
+                }
+            }
+
             likes_count.setOnClickListener({
                 if(adapterPosition != RecyclerView.NO_POSITION) {
                     listener.onLikesCountClick(adapterPosition);
@@ -145,6 +157,8 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
     interface onClickListener {
 
          fun onLikeClick( position_ : Int,  action : Int);
+
+        fun onProfileClick( position_ : Int);
 
         fun onSaveClick( position_ : Int,  action : Int);
 

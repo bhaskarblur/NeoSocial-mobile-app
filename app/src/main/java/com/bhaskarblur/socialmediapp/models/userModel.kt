@@ -12,7 +12,8 @@ class userModel {
         private var profilepic: String = "";
         private var bio: String = "";
         private var status: String = "";
-
+        @SerializedName("link")
+        private var link: String = "";
         constructor() {
 
         }
@@ -23,7 +24,8 @@ class userModel {
             profilepic: String,
             bio: String,
             status: String,
-            token: String
+            token: String,
+            link: String,
         ) {
             this.username = username
             this.email = email
@@ -31,6 +33,7 @@ class userModel {
             this.profilepic = profilepic
             this.bio = bio
             this.status = status
+            this.link = link
         }
 
         constructor(
@@ -38,19 +41,24 @@ class userModel {
             email: String,
             profilepic: String,
             bio: String,
-            status: String
+            status: String,
+            link: String,
         ) {
             this.username = username
             this.email = email
             this.profilepic = profilepic
             this.bio = bio
             this.status = status
+            this.link = link
         }
 
         public fun getUsername(): String {
             return username;
         }
 
+        public fun getLink(): String {
+            return link;
+        }
         public fun getEmail(): String {
             return email;
         }
@@ -135,4 +143,5 @@ class userModel {
         }
 
     }
+
 }

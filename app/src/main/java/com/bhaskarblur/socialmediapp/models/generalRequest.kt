@@ -40,6 +40,28 @@ class actionRequest {
 
 }
 
+class followRequest {
+
+
+    constructor(email: String, token: String
+                , action:String,  fuseremail:String) {
+        this.email = email
+        this.token = token
+        this.action = action;
+        this. fuseremail = fuseremail
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("action")
+    public lateinit var action:String;
+    @SerializedName("fuserid")
+    public lateinit var fuseremail:String;
+
+}
 class commentRequest {
 
 
@@ -60,5 +82,41 @@ class commentRequest {
     public lateinit var comment:String;
     @SerializedName("postid")
     public lateinit var postId:String;
+
+}
+
+class profileRequest {
+
+
+    constructor(email: String, token: String, uemail:String) {
+        this.email = email
+        this.token = token
+        this.uemail = uemail
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+    @SerializedName("uemail")
+    public lateinit var uemail:String;
+
+}
+
+class mutualFollowersRequest {
+
+
+    constructor(email: String, token: String, uemail:String) {
+        this.email = email
+        this.token = token
+        this.uemail = uemail
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+    @SerializedName("fuserid")
+    public lateinit var uemail:String;
 
 }

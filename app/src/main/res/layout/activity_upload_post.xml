@@ -8,7 +8,7 @@
     tools:context=".uploadPost">
 
     <Button
-        android:id="@+id/login_btn2"
+        android:id="@+id/post_btn"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="19dp"
@@ -50,7 +50,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/post_image"
+        android:id="@+id/pick_image"
         android:layout_width="0dp"
         android:layout_height="160dp"
         android:layout_marginTop="40dp"
@@ -59,13 +59,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
+    <ImageView
+        android:id="@+id/post_image"
+        android:layout_width="0dp"
+        android:layout_height="360dp"
+        android:layout_marginTop="40dp"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pick_image" />
+
     <TextView
         android:id="@+id/guide_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/montserrat_medium"
-        android:text="Press to select image"
+        android:text="Press above to select image"
         android:textColor="@color/black"
         android:textSize="14.5sp"
         app:layout_constraintEnd_toEndOf="parent"

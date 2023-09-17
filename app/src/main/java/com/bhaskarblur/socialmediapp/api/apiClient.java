@@ -2,11 +2,16 @@ package com.bhaskarblur.socialmediapp.api;
 
 import com.bhaskarblur.socialmediapp.models.CommentsListModel;
 import com.bhaskarblur.socialmediapp.models.LikesListModel;
+import com.bhaskarblur.socialmediapp.models.MutualFModel;
 import com.bhaskarblur.socialmediapp.models.PostListModel;
+import com.bhaskarblur.socialmediapp.models.ProfileModel;
 import com.bhaskarblur.socialmediapp.models.actionRequest;
 import com.bhaskarblur.socialmediapp.models.commentRequest;
+import com.bhaskarblur.socialmediapp.models.followRequest;
 import com.bhaskarblur.socialmediapp.models.generalRequest;
 import com.bhaskarblur.socialmediapp.models.imageListModel;
+import com.bhaskarblur.socialmediapp.models.mutualFollowersRequest;
+import com.bhaskarblur.socialmediapp.models.profileRequest;
 import com.bhaskarblur.socialmediapp.models.userModel;
 
 import java.util.HashMap;
@@ -51,4 +56,18 @@ public interface apiClient {
     @Multipart
     @POST("users/upload-profile-pic")
     Call<imageListModel> uploadpic(@Part MultipartBody.Part email, @Part MultipartBody.Part token, @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("posts/create-post")
+    Call<imageListModel> uploadpost(@Part MultipartBody.Part email, @Part MultipartBody.Part token,
+                                    @Part MultipartBody.Part posttext, @Part MultipartBody.Part location, @Part MultipartBody.Part file);
+
+    @POST("users/user-profile")
+    Call<ProfileModel> userprofile(@Body profileRequest request);
+
+    @POST("users/follow-user")
+    Call<PostListModel> follow(@Body followRequest request);
+
+    @POST("users/mutual-followers")
+    Call<MutualFModel> mutualfollowers(@Body mutualFollowersRequest request);
 }

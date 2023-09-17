@@ -2,6 +2,7 @@ package com.bhaskarblur.socialmediapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -14,6 +15,8 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -57,21 +60,37 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        manageLogic();
-        loadData();
-        dialog = ProgressDialog.show(
-                this, "",
-                "Loading. Please wait...", true
-        );
+        Window window = getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+
+//        manageLogic();
+//        loadData();
+
     }
 
     private void manageLogic() {
         adapter = new postsAdapter(this, postList);
         adapter.setOnClickInterface(new postsAdapter.onClickListener() {
             @Override
+            public void onProfileClick(int position_) {
+                Bundle bundle = new Bundle();
+                bundle.putString("uemail", postList.get(position_).getUserDetails().getPostedBy());
+                Intent intent = new Intent(MainActivity.this, userProfile.class);
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+
+            @Override
             public void onLikeClick(int position_, int action) {
-//                Toast.makeText(MainActivity.this, "Action "+
-//                        String.valueOf(action), Toast.LENGTH_SHORT).show();
 
                 likePost(postList.get(position_).getPostid(), String.valueOf(action));
             }
@@ -108,6 +127,26 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.postList.setLayoutManager(llm);
         binding.postList.setAdapter(adapter);
 
+
+        binding.userIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email = preferences.getString("userEmail","");
+                Bundle bundle = new Bundle();
+                bundle.putString("uemail", email);
+                Intent intent = new Intent(MainActivity.this, userProfile.class);
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+        });
+        binding.addIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, uploadPost.class));
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+            }
+        });
 
 
     }
@@ -188,7 +227,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
     }
     private void loadData() {
-
+        dialog = ProgressDialog.show(
+                this, "",
+                "Loading. Please wait...", true
+        );
+        postList.clear();
+        adapter.list.clear();
         String email = preferences.getString("userEmail","");
         String name = preferences.getString("userName","");
         String token = preferences.getString("accessToken", "");
@@ -254,6 +298,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 1000);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manageLogic();
+        loadData();
     }
 
     public void finish() {

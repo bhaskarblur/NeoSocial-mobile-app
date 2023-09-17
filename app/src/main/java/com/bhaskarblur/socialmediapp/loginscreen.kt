@@ -6,8 +6,10 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bhaskarblur.socialmediapp.api.apiClient
 import com.bhaskarblur.socialmediapp.databinding.ActivityLoginscreenBinding
 import com.bhaskarblur.socialmediapp.env.keys
@@ -33,6 +35,24 @@ class loginscreen : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         setContentView(binding.root);
+        //      getActionBar().hide();
+        val window = window
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+// finally change the color
+
+// finally change the color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+
 
     }
 
@@ -93,6 +113,8 @@ class loginscreen : AppCompatActivity() {
                                 editor.putString("userEmail", response.body()?.getUserDetails()?.getEmail().toString())
                                 editor.putString("userName", response.body()?.getUserDetails()?.getUsername().toString())
                                 editor.putString("userPic", response.body()?.getUserDetails()?.getProfilepic().toString())
+                                editor.putString("userBio", response.body()?.getUserDetails()?.getBio().toString())
+                                editor.putString("userLink", response.body()?.getUserDetails()?.getLink().toString())
                                 editor.apply()
                                 editor.commit()
                                 startActivity(Intent(this@loginscreen, MainActivity::class.java));

@@ -3,13 +3,14 @@ package com.bhaskarblur.socialmediapp
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bhaskarblur.socialmediapp.api.apiClient
-import com.bhaskarblur.socialmediapp.databinding.ActivityLoginscreenBinding
 import com.bhaskarblur.socialmediapp.databinding.ActivitySignupBinding
 import com.bhaskarblur.socialmediapp.env.keys
 import com.bhaskarblur.socialmediapp.models.userModel
@@ -29,6 +30,23 @@ class signupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater);
         supportActionBar?.hide();
         setContentView(binding.root);
+        //      getActionBar().hide();
+        val window = window
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+// finally change the color
+
+// finally change the color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
 
         manageLogic();
         //      getActionBar().hide();

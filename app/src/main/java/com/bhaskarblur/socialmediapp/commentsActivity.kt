@@ -1,34 +1,30 @@
 package com.bhaskarblur.socialmediapp
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
-import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhaskarblur.socialmediapp.adapter.commentsAdapter
 import com.bhaskarblur.socialmediapp.api.apiClient
 import com.bhaskarblur.socialmediapp.databinding.ActivityCommentsBinding
 import com.bhaskarblur.socialmediapp.env.keys
 import com.bhaskarblur.socialmediapp.models.CommentsListModel
-import com.bhaskarblur.socialmediapp.models.PostListModel
 import com.bhaskarblur.socialmediapp.models.actionRequest
 import com.bhaskarblur.socialmediapp.models.commentRequest
 import com.bhaskarblur.socialmediapp.models.comments
-import okhttp3.internal.notify
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Objects
 
 class commentsActivity : AppCompatActivity() {
 
@@ -45,6 +41,24 @@ class commentsActivity : AppCompatActivity() {
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         manageLogic();
         addData();
+        //      getActionBar().hide();
+        val window = window
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+// finally change the color
+
+// finally change the color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+
 
     }
 

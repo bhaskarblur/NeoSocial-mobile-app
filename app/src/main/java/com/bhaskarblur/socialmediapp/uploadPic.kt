@@ -2,24 +2,22 @@ package com.bhaskarblur.socialmediapp
 
 import android.Manifest
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.MediaStore
-import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.bhaskarblur.socialmediapp.api.apiClient
 import com.bhaskarblur.socialmediapp.databinding.ActivityUploadPicBinding
 import com.bhaskarblur.socialmediapp.env.keys
-import com.bhaskarblur.socialmediapp.models.CommentsListModel
 import com.bhaskarblur.socialmediapp.models.generalRequest
 import com.bhaskarblur.socialmediapp.models.imageListModel
 import com.squareup.picasso.Picasso
@@ -49,10 +47,32 @@ class uploadPic : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         manageUI();
+        //      getActionBar().hide();
+        val window = window
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+// finally change the color
+
+// finally change the color
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+
     }
 
     private fun manageUI() {
 
+        binding.backButton2.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_right);
+        }
         binding.pfpimage.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val result: Int =
@@ -98,21 +118,6 @@ class uploadPic : AppCompatActivity() {
         }
     }
 
-    fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
-        Log.d("imin", "onClick: in image conversion")
-        var cursor: Cursor? = null
-        return try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
-            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            Log.d("imin", "onClick: in image conversion try")
-            cursor.getString(column_index)
-        } finally {
-            Log.d("imin", "onClick: in image conversion finally")
-            cursor?.close()
-        }
-    }
     private fun uploadPic_() {
 
        val fileDir = applicationContext.filesDir
@@ -144,7 +149,7 @@ class uploadPic : AppCompatActivity() {
 
         val dialog = ProgressDialog.show(
             this@uploadPic, "",
-            "Loading. Please wait...", true
+            "Upload. Please wait...", true
         )
         upload.enqueue(object : Callback<imageListModel> {
             override fun onResponse(
@@ -183,7 +188,7 @@ class uploadPic : AppCompatActivity() {
         if(requestCode == 101) {
             if(data != null) {
                 val extras: Bundle? = data.extras;
-                if (extras != null) {
+                if (extras != null || data.data != null) {
                     //Get image
                     val uri: Uri? = data.data;
                     selected_uri = uri.toString();
