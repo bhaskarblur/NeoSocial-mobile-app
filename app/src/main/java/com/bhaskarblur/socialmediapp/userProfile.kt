@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -28,7 +29,6 @@ import com.bhaskarblur.socialmediapp.models.deletePostRequest
 import com.bhaskarblur.socialmediapp.models.followRequest
 import com.bhaskarblur.socialmediapp.models.mutualFollowersRequest
 import com.bhaskarblur.socialmediapp.models.profileRequest
-import com.google.android.datatransport.runtime.util.PriorityMapping.toInt
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import retrofit2.Call
@@ -37,6 +37,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Objects
+
 
 class userProfile : AppCompatActivity() {
 
@@ -58,7 +59,7 @@ class userProfile : AppCompatActivity() {
         var bundle_ = _intent.getBundleExtra("data");
         uemail = bundle_!!.getString("uemail", "");
         manageLogic();
-        loadData();
+
         //      getActionBar().hide();
         val window = window
 
@@ -91,7 +92,8 @@ class userProfile : AppCompatActivity() {
             }
         })
         binding.userLink.setOnClickListener {
-
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(binding.userLink.text.toString()))
+            startActivity(browserIntent)
         }
         binding.backButton4.setOnClickListener {
             finish();
@@ -466,5 +468,10 @@ class userProfile : AppCompatActivity() {
 
             override fun onFailure(call: Call<PostListModel?>, t: Throwable) {}
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData();
     }
 }
