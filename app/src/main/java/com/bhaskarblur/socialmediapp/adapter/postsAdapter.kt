@@ -21,9 +21,11 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
     private lateinit var context_ : Context;
     public lateinit var list : ArrayList<Posts>;
     public lateinit var listener_ : onClickListener;
-    constructor(context_: Context, list: ArrayList<Posts>) : super() {
+    private var email = "";
+    constructor(context_: Context, list: ArrayList<Posts>, email: kotlin.String) : super() {
         this.context_ = context_
         this.list = list
+        this.email = email;
     }
 
     constructor() : super()
@@ -49,6 +51,13 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
         holder.likes_count.setText(list.get(position).likesCount.toString());
         holder.comment_count.setText(list.get(position).commentsCount.toString());
 
+
+        if (list.get(position).userDetails!!.postedBy.equals(email)) {
+            holder.delete_btn.visibility = View.VISIBLE;
+        }
+        else {
+            holder.delete_btn.visibility = View.GONE;
+        }
         if(list.get(position).isLiked == 1) {
             holder.like_button.setImageResource(R.drawable.love_on);
             holder.like_button.setTag(R.drawable.love_on);
@@ -65,6 +74,7 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
             holder.save_button.setImageResource(R.drawable.bookmark_off);
             holder.save_button.setTag(R.drawable.bookmark_off);
         }
+
     }
 
     override fun getItemCount(): Int {
@@ -83,6 +93,7 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
         var like_button : ImageView = itemView.findViewById(R.id.love_icon);
         var comment_button : ImageView = itemView.findViewById(R.id.comment_icon);
         var save_button : ImageView = itemView.findViewById(R.id.save_icon);
+        var delete_btn : ImageView = itemView.findViewById(R.id.delete_icon2);
         init {
 
             like_button.setOnClickListener {
@@ -135,6 +146,11 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
                 }
             }
 
+            delete_btn.setOnClickListener {
+                if(adapterPosition != RecyclerView.NO_POSITION) {
+                    listener.onDeleteClick(    adapterPosition);
+                }
+            }
             user_name.setOnClickListener  {
                 if(adapterPosition != RecyclerView.NO_POSITION) {
                     listener.onProfileClick(    adapterPosition);
@@ -156,6 +172,7 @@ class postsAdapter : RecyclerView.Adapter<postsAdapter.viewHolder> {
 
     interface onClickListener {
 
+        fun onDeleteClick( position_ : Int);
          fun onLikeClick( position_ : Int,  action : Int);
 
         fun onProfileClick( position_ : Int);

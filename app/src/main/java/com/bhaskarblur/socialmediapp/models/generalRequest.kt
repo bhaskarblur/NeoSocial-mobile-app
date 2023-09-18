@@ -85,6 +85,25 @@ class commentRequest {
 
 }
 
+
+class deletePostRequest {
+
+
+    constructor(email: String, token: String,postId:String) {
+        this.email = email
+        this.token = token
+        this. postId = postId
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("postid")
+    public lateinit var postId:String;
+
+}
 class profileRequest {
 
 
@@ -118,5 +137,44 @@ class mutualFollowersRequest {
     public lateinit var token:String;
     @SerializedName("fuserid")
     public lateinit var uemail:String;
+
+}
+
+class linkRequest {
+
+
+    constructor(email: String, token: String, link:String) {
+        this.email = email
+        this.token = token
+        this. link = link
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("link")
+    public lateinit var link:String;
+
+}
+
+
+class bioRequest {
+
+
+    constructor(email: String, token: String, bio:String) {
+        this.email = email
+        this.token = token
+        this. bio = bio
+    }
+
+    @SerializedName("email")
+    public lateinit var email:String;
+    @SerializedName("token")
+    public lateinit var token:String;
+
+    @SerializedName("bio")
+    public lateinit var bio:String;
 
 }

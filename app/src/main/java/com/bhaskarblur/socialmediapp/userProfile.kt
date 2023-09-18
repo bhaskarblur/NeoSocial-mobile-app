@@ -1,9 +1,9 @@
 package com.bhaskarblur.socialmediapp
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -24,9 +24,11 @@ import com.bhaskarblur.socialmediapp.models.PostListModel
 import com.bhaskarblur.socialmediapp.models.Posts
 import com.bhaskarblur.socialmediapp.models.ProfileModel
 import com.bhaskarblur.socialmediapp.models.actionRequest
+import com.bhaskarblur.socialmediapp.models.deletePostRequest
 import com.bhaskarblur.socialmediapp.models.followRequest
 import com.bhaskarblur.socialmediapp.models.mutualFollowersRequest
 import com.bhaskarblur.socialmediapp.models.profileRequest
+import com.google.android.datatransport.runtime.util.PriorityMapping.toInt
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import retrofit2.Call
@@ -45,11 +47,13 @@ class userProfile : AppCompatActivity() {
     var dialog: ProgressDialog? = null
     private var preferences: SharedPreferences? = null
     private var uemail : String =""
+    private var prefs: SharedPreferences? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserProfileBinding.inflate(layoutInflater);
         setContentView(binding.root);
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         var _intent = intent;
         var bundle_ = _intent.getBundleExtra("data");
         uemail = bundle_!!.getString("uemail", "");
@@ -76,7 +80,16 @@ class userProfile : AppCompatActivity() {
     }
 
     private fun manageLogic() {
-
+        val email = preferences!!.getString("userEmail", "")
+        binding.editIcon.setOnClickListener(View.OnClickListener {
+            if(uemail == email) {
+                val intent = Intent(this@userProfile, uploadPic::class.java)
+                val bundle = Bundle()
+                bundle.putString("entry", "profile");
+                intent.putExtra("data", bundle)
+                startActivity(intent)
+            }
+        })
         binding.userLink.setOnClickListener {
 
         }
@@ -88,14 +101,33 @@ class userProfile : AppCompatActivity() {
         binding.followBtn.setOnClickListener {
             if(binding.followBtn.text.equals("Following")) {
                 followUser(1.toString());
+                binding.followersCount.setText((binding.followersCount.text.toString().toIntOrNull()!! - 1).toString());
             }
             else {
                 followUser(0.toString());
+                binding.followersCount.setText((binding.followersCount.text.toString().toIntOrNull()!! + 1).toString());
             }
         }
 
-        adapter = postsAdapter(this, postList)
+
+        adapter = postsAdapter(this, postList, email!!)
         adapter!!.setOnClickInterface(object : postsAdapter.onClickListener {
+            override fun onDeleteClick(position_: Int) {
+                val alertDialogBuilder = AlertDialog.Builder(this@userProfile)
+                alertDialogBuilder.setMessage("Are you sure you want to delete this post")
+                alertDialogBuilder.setPositiveButton(
+                    "Yes"
+                ) { dialogInterface, i ->
+                    deletePost(postList[position_].postid!!)
+                    postList.removeAt(position_)
+                    adapter!!.notifyDataSetChanged()
+
+                }.setNegativeButton(
+                    "No"
+                ) { dialogInterface, i -> }
+                alertDialogBuilder.show()
+            }
+
             override fun onLikeClick(position_: Int, action: Int) {
                 likePost(postList[position_].postid!!, action.toString())
             }
@@ -130,12 +162,6 @@ class userProfile : AppCompatActivity() {
         binding.postList.layoutManager = llm
         binding.postList.adapter = adapter
 
-        val email = preferences!!.getString("userEmail", "")
-        binding.pfpimage2.setOnClickListener(View.OnClickListener {
-            if(uemail == email) {
-                startActivity(Intent(this@userProfile, uploadPic::class.java))
-            }
-        })
     }
 
 
@@ -179,6 +205,45 @@ class userProfile : AppCompatActivity() {
         })
     }
 
+    private fun deletePost(postId: String) {
+        val email = preferences!!.getString("userEmail", "")
+        val token = preferences!!.getString("accessToken", "")
+        val _keys = keys()
+        val client = Retrofit.Builder().baseUrl(_keys.api_baseurl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api = client.create(apiClient::class.java)
+        val request = deletePostRequest(email!!, token!!, postId);
+        val likepostCall = api.deletepost(request)
+        likepostCall.enqueue(object : Callback<PostListModel?> {
+            override fun onResponse(
+                call: Call<PostListModel?>,
+                response: Response<PostListModel?>
+            ) {
+                if (response.code() == 200) {
+
+                    if (response.body() != null) {
+                        Objects.requireNonNull(
+                            response.body()!!.message
+                        )?.let {
+                            Log.d(
+                                "msg", it
+                            )
+                        }
+                    }
+                } else {
+                    if (response.body() != null) {
+                        Toast.makeText(
+                            this@userProfile, response
+                                .body()!!.message, Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostListModel?>, t: Throwable) {}
+        })
+    }
     private fun mutualFollowers() {
         val email = preferences!!.getString("userEmail", "")
         val token = preferences!!.getString("accessToken", "")
@@ -311,6 +376,12 @@ class userProfile : AppCompatActivity() {
                     binding.followersCount.setText(details!!.getFollowersCount().toString());
                     binding.followingCount.setText(details!!.getFollowingCount().toString());
 
+                    var editor : SharedPreferences.Editor = prefs!!.edit();
+                    editor.putString("userBio", details!!.getBio());
+                    editor.putString("userLink",details!!.getLink());
+                    editor.putString("userPic", details!!.getProfilepic());
+                    editor.apply()
+                    editor.commit()
                     if(!details!!.getProfilepic().isEmpty() &&
                         details!!.getProfilepic() !=null) {
                         Picasso.get().load( details!!.getProfilepic())
@@ -321,7 +392,11 @@ class userProfile : AppCompatActivity() {
                     if(uemail.toString().equals(email)) {
                         binding.followBtn.setVisibility(View.GONE);
                         binding.messageBtn.setVisibility(View.GONE);
+                        binding.editIcon.visibility = View.VISIBLE;
 
+                    }
+                    else {
+                        binding.editIcon.visibility = View.GONE;
                     }
                     if(details!!.getIsFollowed() == 1) {
                         binding.followBtn.setText("Following");

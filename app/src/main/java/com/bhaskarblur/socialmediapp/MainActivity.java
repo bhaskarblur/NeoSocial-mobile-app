@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.bhaskarblur.socialmediapp.env.keys;
 import com.bhaskarblur.socialmediapp.models.PostListModel;
 import com.bhaskarblur.socialmediapp.models.Posts;
 import com.bhaskarblur.socialmediapp.models.actionRequest;
+import com.bhaskarblur.socialmediapp.models.deletePostRequest;
 import com.bhaskarblur.socialmediapp.models.generalRequest;
 import com.bhaskarblur.socialmediapp.models.userModel;
 import com.squareup.picasso.Picasso;
@@ -77,8 +80,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void manageLogic() {
-        adapter = new postsAdapter(this, postList);
+
+        String email = preferences.getString("userEmail","");
+        adapter = new postsAdapter(this, postList, email);
         adapter.setOnClickInterface(new postsAdapter.onClickListener() {
+            @Override
+            public void onDeleteClick(int position_) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setMessage("Are you sure you want to delete this post");
+                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deletePost(postList.get(position_).getPostid());
+                        postList.remove(position_);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                alertDialogBuilder.show();
+
+            }
+
             @Override
             public void onProfileClick(int position_) {
                 Bundle bundle = new Bundle();
@@ -149,6 +176,44 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
 
 
+    }
+
+    private void deletePost(String postid) {
+        String email = preferences.getString("userEmail","");
+        String token = preferences.getString("accessToken", "");
+        keys _keys = new keys();
+        Retrofit client = new Retrofit.Builder().baseUrl(_keys.getApi_baseurl())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        apiClient api = client.create(apiClient.class);
+
+        deletePostRequest request = new deletePostRequest(email,token, postid);
+
+        Call<PostListModel> likepostCall = api.deletepost(request);
+
+        likepostCall.enqueue(new Callback<PostListModel>() {
+            @Override
+            public void onResponse(Call<PostListModel> call, Response<PostListModel> response) {
+
+                if(response.code() == 200) {
+                    if (response.body() != null) {
+                        Log.d("msg", Objects.requireNonNull(response.body().getMessage()));
+                    }
+                }
+                else {
+                    if (response.body() != null) {
+                        Toast.makeText(MainActivity.this, response
+                                .body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostListModel> call, Throwable t) {
+
+            }
+        });
     }
 
     private void likePost(String postId, String action) {

@@ -31,6 +31,7 @@ class likesActivity : AppCompatActivity() {
     private lateinit var adapter : likesAdapter;
     private var preferences: SharedPreferences? = null;
     private var post_id : String = "";
+    private var entryType : String = "";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLikesBinding.inflate(layoutInflater);

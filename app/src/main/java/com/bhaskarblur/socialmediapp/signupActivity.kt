@@ -112,7 +112,11 @@ class signupActivity : AppCompatActivity() {
                                 editor.putString("userPic", response.body()?.getUserDetails()?.getProfilepic().toString())
                                 editor.apply()
                                 editor.commit()
-                                startActivity(Intent(this@signupActivity, uploadPic::class.java));
+                                val intent = Intent(this@signupActivity, uploadPic::class.java)
+                                val bundle = Bundle()
+                                bundle.putString("entry", "signup");
+                                intent.putExtra("data", bundle)
+                                startActivity(intent)
                                 finish();
 
                             }

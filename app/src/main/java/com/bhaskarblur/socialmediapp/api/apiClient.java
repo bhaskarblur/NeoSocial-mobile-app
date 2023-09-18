@@ -6,10 +6,13 @@ import com.bhaskarblur.socialmediapp.models.MutualFModel;
 import com.bhaskarblur.socialmediapp.models.PostListModel;
 import com.bhaskarblur.socialmediapp.models.ProfileModel;
 import com.bhaskarblur.socialmediapp.models.actionRequest;
+import com.bhaskarblur.socialmediapp.models.bioRequest;
 import com.bhaskarblur.socialmediapp.models.commentRequest;
+import com.bhaskarblur.socialmediapp.models.deletePostRequest;
 import com.bhaskarblur.socialmediapp.models.followRequest;
 import com.bhaskarblur.socialmediapp.models.generalRequest;
 import com.bhaskarblur.socialmediapp.models.imageListModel;
+import com.bhaskarblur.socialmediapp.models.linkRequest;
 import com.bhaskarblur.socialmediapp.models.mutualFollowersRequest;
 import com.bhaskarblur.socialmediapp.models.profileRequest;
 import com.bhaskarblur.socialmediapp.models.userModel;
@@ -70,4 +73,13 @@ public interface apiClient {
 
     @POST("users/mutual-followers")
     Call<MutualFModel> mutualfollowers(@Body mutualFollowersRequest request);
+
+    @POST("users/set-bio")
+    Call<PostListModel> setbio(@Body bioRequest request);
+
+    @POST("users/set-link")
+    Call<PostListModel> setlink(@Body linkRequest request);
+
+    @POST("posts/delete-post")
+    Call<PostListModel> deletepost(@Body deletePostRequest request);
 }
